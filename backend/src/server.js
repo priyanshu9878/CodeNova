@@ -52,5 +52,11 @@ const InitializeConnection = async () => {
     console.error("Error starting server:", error);
   }
 };
+app.get("/", (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "CodeNova Backend is running "
+    });
+});
 
 InitializeConnection();
