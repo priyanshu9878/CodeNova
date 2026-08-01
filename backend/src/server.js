@@ -37,26 +37,16 @@ app.use("/submission", submitRouter);
 app.use("/ai", chatRouter);
 app.use("/video", videoRouter);
 
-const InitializeConnection = async () => {
-  try {
-    await Promise.all([main(), RedisClient.connect()]);
-
-    console.log("DB connected");
-
-    const PORT = process.env.PORT || 3000;
-
-    app.listen(PORT, () => {
-      console.log(`Server listening at port ${PORT}`);
-    });
-  } catch (error) {
-    console.error("Error starting server:", error);
-  }
-};
-app.get("/", (req, res) => {
-    res.status(200).json({
-        success: true,
-        message: "CodeNova Backend is running "
-    });
-});
+const InitializeConnection = async ()=> {
+    try{
+        await Promise.all( [main(),RedisClient.connect()])
+        console.log("DB connected");
+        app.listen(process.env.PORT,()=>{
+            console.log(`server listening at port ${process.env.PORT}`);
+        })
+    }catch(error){
+      console.error("Error starting server:", error);
+    }
+}
 
 InitializeConnection();
