@@ -1,9 +1,10 @@
 import express from "express";
 import { userMiddleware } from "../middleware/usermiddleware.js";
 import {solveDoubt} from "../controllers/solveDoubt.js";
+import { aiLimiter } from "../middleware/AIlimiter.js";
 
 const chatRouter = express.Router();
 
- chatRouter.post("/chat",userMiddleware,solveDoubt);
+ chatRouter.post("/chat",userMiddleware,aiLimiter,solveDoubt);
 
  export default chatRouter;
