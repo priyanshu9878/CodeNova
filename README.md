@@ -285,6 +285,6 @@ It motivates further development.
 
 ### 🚀 Happy Coding with CodeNova!
 
-Made with ❤️ by **Priyanshu Parmar**
+Made with ❤️ by **Priyanshu**
 
 </div>
