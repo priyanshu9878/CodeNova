@@ -24,12 +24,19 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
-      // Add your frontend Render URL here after deployment
       // "https://your-frontend.onrender.com"
     ],
     credentials: true,
   })
 );
+
+// ✅ Health Route
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "CodeNova Backend is running 🚀",
+  });
+});
 
 app.use("/user", authRouter);
 app.use("/problem", problemRouter);
@@ -37,16 +44,20 @@ app.use("/submission", submitRouter);
 app.use("/ai", chatRouter);
 app.use("/video", videoRouter);
 
-const InitializeConnection = async ()=> {
-    try{
-        await Promise.all( [main(),RedisClient.connect()])
-        console.log("DB connected");
-        app.listen(process.env.PORT,()=>{
-            console.log(`server listening at port ${process.env.PORT}`);
-        })
-    }catch(error){
-      console.error("Error starting server:", error);
-    }
-}
+const InitializeConnection = async () => {
+  try {
+    await Promise.all([main(), RedisClient.connect()]);
+
+    console.log("DB connected");
+
+    const PORT = process.env.PORT || 3000;
+
+    app.listen(PORT, () => {
+      console.log(`Server listening at port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Error starting server:", error);
+  }
+};
 
 InitializeConnection();
