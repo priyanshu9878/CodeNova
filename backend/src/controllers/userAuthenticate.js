@@ -24,7 +24,14 @@ export const Register = async(req,res)=>{
     
     // sending token 
     const token = jwt.sign({emailId:emailId,_id:user._id,role:'user'},process.env.JWT_SECRET_KEY,{expiresIn: 60*60});
-    res.cookie("token",token,{maxAge:60*60*1000});
+   const isProduction = process.env.NODE_ENV === "production";
+
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "None" : "Lax",
+  maxAge: 60 * 60 * 1000,
+});
 
     const reply = {
         firstName : user.firstName,
@@ -68,7 +75,14 @@ try{
     }
 
      const token = jwt.sign({emailId:emailId,_id:user._id, role:user.role},process.env.JWT_SECRET_KEY,{expiresIn: 60*60});
-    res.cookie("token",token,{maxAge:60*60*1000});
+    const isProduction = process.env.NODE_ENV === "production";
+
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "None" : "Lax",
+  maxAge: 60 * 60 * 1000,
+});
 
     res.status(200).json({
         user:reply,
@@ -90,7 +104,15 @@ export const Logout = async(req,res)=>{
     await RedisClient.set(`token:${token}`, `Blocked`);   //  KEY:VALUE pair
     await RedisClient.expireAt(`token:${token}`,payload.exp);
 
-    res.cookie("token",null, {expires:new Date(Date.now())});   // token null v kr diya
+       // token null v kr diya
+       const isProduction = process.env.NODE_ENV === "production";
+
+res.cookie("token", "", {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "None" : "Lax",
+  expires: new Date(0),
+});
 
     res.send("Logged Out successfully");
 
@@ -111,7 +133,14 @@ export const AdminRegister= async(req,res)=>{
     
     // sending token 
     const token = jwt.sign({emailId:emailId,_id:user._id,role:user.role},process.env.JWT_SECRET_KEY,{expiresIn: 60*60});
-    res.cookie("token",token,{maxAge:60*60*1000});
+    const isProduction = process.env.NODE_ENV === "production";
+
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "None" : "Lax",
+  maxAge: 60 * 60 * 1000,
+});
 
     res.status(201).send("admin registered successfully!!");
          

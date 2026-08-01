@@ -24,7 +24,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
-      // "https://your-frontend.onrender.com"
+      "https://code-nova-qul2akshy-priyanshu-p-projects14.vercel.app",
     ],
     credentials: true,
   })
