@@ -14,11 +14,9 @@ const AdminDelete = () => {
   const fetchProblems = async () => {
     try {
       setLoading(true);
-      const { data } = await axiosClient.get('/problem/getAllProblem');
-      console.log(data);
+      const { data } = await axiosClient.get('/problem/admin/all');
+      setProblems(data);
 
-
-     setProblems(data.problems || []);
     } catch (err) {
       setError('Failed to fetch problems');
       console.error(err);
