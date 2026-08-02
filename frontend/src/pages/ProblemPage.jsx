@@ -8,12 +8,23 @@ import ChatAI from '../components/chatAI.jsx';
 import Editorial from '../components/Editorial.jsx';
 
 
-const langMap = {
-        cpp: 'C++',
-        java: 'Java',
-        javascript: 'JavaScript'
-};
+const normalizeLanguage = (lang) => {
+  switch (lang.toLowerCase()) {
+    case "c++":
+    case "cpp":
+      return "cpp";
 
+    case "java":
+      return "java";
+
+    case "javascript":
+    case "js":
+      return "javascript";
+
+    default:
+      return lang.toLowerCase();
+  }
+};
 
 const ProblemPage = () => {
   const [problem, setProblem] = useState(null);
@@ -33,42 +44,50 @@ const ProblemPage = () => {
   const { handleSubmit } = useForm();
   
   useEffect(() => {
-    const fetchProblem = async () => {
-      setLoading(true);
-      try {
-        
-       const response = await axiosClient.get(`/problem/problemById/${problemId}`);
+  const fetchProblem = async () => {
+    setLoading(true);
 
-//console.log("RUN RESPONSE =", response.data);
+    try {
+      const response = await axiosClient.get(
+        `/problem/problemById/${problemId}`
+      );
 
-setRunResult(response.data);
-       
-        
-        const initialCode = response.data.startCode.find(sc => sc.language === langMap[selectedLanguage]).initialCode;
+      const data = response.data;
 
-        setProblem(response.data);
-        
-        setCode(initialCode);
-        setLoading(false);
-        
-      } catch (error) {
-        console.error('Error fetching problem:', error);
-        console.log(error.response?.data);
-         console.log(error.response?.status);
-        setLoading(false);
-      }
-    };
+      setProblem(data);
 
-    fetchProblem();
-  }, [problemId]);
+      const start = data.startCode.find(
+        (sc) =>
+          normalizeLanguage(sc.language) ===
+          normalizeLanguage(selectedLanguage)
+      );
+
+      setCode(start?.initialCode || "");
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching problem:", error);
+      console.log(error.response?.data);
+      console.log(error.response?.status);
+      setLoading(false);
+    }
+  };
+
+  fetchProblem();
+}, [problemId]);
 
   // Update code when language changes
-  useEffect(() => {
-    if (problem) {
-      const initialCode = problem.startCode.find(sc => sc.language === langMap[selectedLanguage]).initialCode;
-      setCode(initialCode);
-    }
-  }, [selectedLanguage, problem]);
+ useEffect(() => {
+  if (!problem) return;
+
+  const start = problem.startCode.find(
+    (sc) =>
+      normalizeLanguage(sc.language) ===
+      normalizeLanguage(selectedLanguage)
+  );
+
+  setCode(start?.initialCode || "");
+}, [selectedLanguage, problem]);
 
   const handleEditorChange = (value) => {
     setCode(value || '');
