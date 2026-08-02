@@ -1,7 +1,7 @@
 import express from "express";
 import { userMiddleware } from "../middleware/usermiddleware.js";
 import {solveDoubt} from "../controllers/solveDoubt.js";
-import { aiLimiter } from "../middleware/AIlimiter.js";
+import { aiLimiter } from "../middleware/Ailimiter.js";
 
 const chatRouter = express.Router();
 
