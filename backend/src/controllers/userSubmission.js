@@ -54,8 +54,13 @@ if (!driver) {
     });
 }
 
+const helper = problem.helperCode.find(
+    h => normalizeLanguage(h.language) === normalizeLanguage(language)
+);
 
 const executableCode = `
+${helper?.code || ""}
+
 ${code}
 
 ${driver.code}
@@ -185,8 +190,13 @@ export const runCode = async (req, res) => {
             });
         }
 
+        const helper = problem.helperCode.find(
+    h => normalizeLanguage(h.language) === normalizeLanguage(language)
+);
         
         const executableCode = `
+${helper?.code || ""}
+
 ${code}
 
 ${driver.code}
