@@ -6,20 +6,46 @@ import SolutionVideo from "../models/solutionVideo.js";
 
 export const createProblem = async (req, res) => {
   try {
-    const { referenceSolution, driverCode, visibleTestCases } = req.body;
+    const {
+      referenceSolution,
+      driverCode,
+      visibleTestCases,
+      helperCode = [],
+    } = req.body;
 
     const getHeader = (language) => {
       switch (language.toLowerCase()) {
-        case "c++":
         case "cpp":
-          return `#include <bits/stdc++.h>\nusing namespace std;\n`;
+        case "c++":
+          return "#include <bits/stdc++.h>\nusing namespace std;";
+
         case "java":
-          return `import java.util.*;\n`;
+          return "import java.util.*;";
+
         case "javascript":
         case "js":
-          return `const fs = require("fs");\n`;
+          return "";
+
         default:
           return "";
+      }
+    };
+
+    const normalizeLanguage = (lang) => {
+      switch (lang.toLowerCase()) {
+        case "cpp":
+        case "c++":
+          return "cpp";
+
+        case "java":
+          return "java";
+
+        case "javascript":
+        case "js":
+          return "javascript";
+
+        default:
+          return lang.toLowerCase();
       }
     };
 
@@ -28,8 +54,11 @@ export const createProblem = async (req, res) => {
       const completeCode = ref.completeCode;
       const languageId = getLanguageId(language);
 
+      // Driver Code
       const driver = driverCode.find(
-        (d) => d.language.toLowerCase() === language.toLowerCase()
+        (d) =>
+          normalizeLanguage(d.language) ===
+          normalizeLanguage(language)
       );
 
       if (!driver) {
@@ -38,11 +67,27 @@ export const createProblem = async (req, res) => {
         });
       }
 
-      const executableCode = `${completeCode}\n${driver.code}`;
+      // Helper Code (optional)
+      const helper = helperCode.find(
+        (h) =>
+          normalizeLanguage(h.language) ===
+          normalizeLanguage(language)
+      );
+
+      // Final executable program
+      const executableCode = `
+${getHeader(language)}
+
+${helper?.code || ""}
+
+${completeCode}
+
+${driver.code}
+`;
 
       console.log("========== CODE ==========");
-console.log(executableCode);
-console.log("==========================");
+      console.log(executableCode);
+      console.log("==========================");
 
       const submissions = visibleTestCases.map((testCase) => ({
         source_code: executableCode,
@@ -51,20 +96,15 @@ console.log("==========================");
         expected_output: testCase.output,
       }));
 
-      // 1. Send batch to Judge0
+      // Submit to Judge0
       const submitResult = await submitBatch(submissions);
-
-      console.log(JSON.stringify(submissions, null, 2));
 
       const resultTokens = submitResult.map((item) => item.token);
 
-      // 2. Poll Judge0 until completed (handled inside submitToken)
       const testResults = await submitToken(resultTokens);
 
-      // 3. Inspect results for failures
       for (const result of testResults) {
         if (result.status.id !== 3) {
-          // Decode Judge0 Base64 fields for clear terminal debugging
           const decodedStdout = decode(result.stdout);
           const decodedStderr = decode(result.stderr);
           const decodedCompileOutput = decode(result.compile_output);
@@ -98,6 +138,7 @@ console.log("==========================");
 
   } catch (error) {
     console.error("Controller Error:", error);
+
     return res.status(500).json({
       message: error.message,
     });

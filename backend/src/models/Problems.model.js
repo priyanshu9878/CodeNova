@@ -12,6 +12,18 @@ const problemSchema = new Schema({
         type:String,
         required:true
     },
+    helperCode: [
+  {
+    language: {
+      type: String,
+      required: true
+    },
+    code: {
+      type: String,
+      required: true
+    }
+  }
+],
     difficulty:{
         type:String,
         enum : ["easy","medium","hard"],
