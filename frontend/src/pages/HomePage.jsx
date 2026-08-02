@@ -9,6 +9,8 @@ function HomePage() {
   const { user } = useSelector((state) => state.auth);
   const [problems, setProblems] = useState([]);
   const [solvedProblems, setSolvedProblems] = useState([]);
+  const [page, setPage] = useState(1);
+const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState({
     difficulty: 'all',
     tag: 'all',
@@ -18,8 +20,12 @@ function HomePage() {
   useEffect(() => {
     const fetchProblems = async () => {
       try {
-        const { data } = await axiosClient.get('/problem/getAllProblem');
-       setProblems(data.problems || []);
+        const { data } = await axiosClient.get(
+  `/problem/getAllProblem?page=${page}`
+);
+
+setProblems(data.problems || []);
+setTotalPages(data.totalPages);
 
 
         console.log(data);
@@ -43,7 +49,7 @@ function HomePage() {
 
     fetchProblems();
     if (user) fetchSolvedProblems();
-  }, [user]);
+  }, [user,page]);
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -110,8 +116,9 @@ function HomePage() {
           >
             <option value="all">All Tags</option>
             <option value="array">Array</option>
-            <option value="linkedList">Linked List</option>
-            <option value="graph">Graph</option>
+            <option value="linked-list">Linked List</option>
+            <option value="trees">Tree</option>
+           <option value="graphs">Graph</option>
             <option value="dp">DP</option>
           </select>
         </div>
@@ -149,6 +156,28 @@ function HomePage() {
             </div>
           ))}
         </div>
+
+        <div className="flex justify-center gap-4 mt-8">
+  <button
+    className="btn"
+    disabled={page === 1}
+    onClick={() => setPage(page - 1)}
+  >
+    Previous
+  </button>
+
+  <span className="flex items-center">
+    Page {page} of {totalPages}
+  </span>
+
+  <button
+    className="btn"
+    disabled={page === totalPages}
+    onClick={() => setPage(page + 1)}
+  >
+    Next
+  </button>
+</div>
       </div>
     </div>
   );
