@@ -3,7 +3,26 @@ import Submission from "../models/submission.model.js";
 import {submitBatch,submitToken,getLanguageId, normalizeLanguage} from "../utils/problemutility.js"
 import User from "../models/User.model.js";
 
+const getHeader = (language) => {
+  switch (language.toLowerCase()) {
+    case "cpp":
+    case "c++":
+      return "#include <bits/stdc++.h>\nusing namespace std;";
+
+    case "java":
+      return "import java.util.*;";
+
+    case "javascript":
+    case "js":
+      return "";
+
+    default:
+      return "";
+  }
+};
+
 export const userSubmission = async (req,res)=>{
+    console.log("SUBMIT HIT");
     try{
 
         const userId = req.result._id;
@@ -25,23 +44,6 @@ export const userSubmission = async (req,res)=>{
         // submit code to judge0
         const languageId = getLanguageId(language);
          
-         const normalizeLanguage = (lang) => {
-    switch (lang.toLowerCase()) {
-        case "cpp":
-        case "c++":
-            return "cpp";
-
-        case "java":
-            return "java";
-
-        case "javascript":
-        case "js":
-            return "javascript";
-
-        default:
-            return lang.toLowerCase();
-    }
-};
 
 const driver = problem.driverCode.find(
     d => normalizeLanguage(d.language) === normalizeLanguage(language)
@@ -54,17 +56,27 @@ if (!driver) {
     });
 }
 
-const helper = problem.helperCode.find(
+const helper = (problem.helperCode || []).find(
     h => normalizeLanguage(h.language) === normalizeLanguage(language)
 );
 
 const executableCode = `
+${getHeader(language)}
+
 ${helper?.code || ""}
 
 ${code}
 
 ${driver.code}
 `;
+
+console.log("========== EXECUTABLE CODE ==========");
+console.log(executableCode);
+console.log("=====================================");
+console.log("========== EXECUTABLE CODE ==========");
+console.log(executableCode);
+console.log("=====================================");
+
 
 const submissions = problem.hiddenTestCases.map(testCase => ({
     source_code: executableCode,
@@ -91,6 +103,10 @@ const formattedResults = testResult.map(tc => ({
     compile_output: decode(tc.compile_output),
     expected_output: decode(tc.expected_output)
 }));
+
+console.log("========== JUDGE0 RESULT ==========");
+console.log(JSON.stringify(formattedResults, null, 2));
+console.log("==================================");
 
 //      console.log("Judge0 Submit Result:");
 // console.log(JSON.stringify(testResult, null, 2));
@@ -148,6 +164,7 @@ const formattedResults = testResult.map(tc => ({
 }
 
 export const runCode = async (req, res) => {
+     console.log("RUN CODE HIT");
     try {
         const userId = req.result._id;
         const problemId = req.params.id.trim();
@@ -165,21 +182,6 @@ export const runCode = async (req, res) => {
 
         const languageId = getLanguageId(language);
 
-        const normalizeLanguage = (lang) => {
-            switch (lang.toLowerCase()) {
-                case "cpp":
-                case "c++":
-                    return "cpp";
-                case "java":
-                    return "java";
-                case "javascript":
-                case "js":
-                    return "javascript";
-                default:
-                    return lang.toLowerCase();
-            }
-        };
-
         const driver = problem.driverCode.find(
             d => normalizeLanguage(d.language) === normalizeLanguage(language)
         );
@@ -190,17 +192,23 @@ export const runCode = async (req, res) => {
             });
         }
 
-        const helper = problem.helperCode.find(
-    h => normalizeLanguage(h.language) === normalizeLanguage(language)
-);
-        
+        const helper = (problem.helperCode || []).find(
+            h => normalizeLanguage(h.language) === normalizeLanguage(language)
+        );
+
         const executableCode = `
+${getHeader(language)}
+
 ${helper?.code || ""}
 
 ${code}
 
 ${driver.code}
 `;
+
+        console.log("========== EXECUTABLE CODE ==========");
+        console.log(executableCode);
+        console.log("=====================================");
 
         const submissions = problem.visibleTestCases.map(testCase => ({
             source_code: executableCode,
@@ -225,6 +233,10 @@ ${driver.code}
             compile_output: decode(tc.compile_output),
             expected_output: decode(tc.expected_output)
         }));
+
+        console.log("========== JUDGE0 RESULT ==========");
+        console.log(JSON.stringify(formattedResults, null, 2));
+        console.log("===================================");
 
         const success = formattedResults.every(tc => tc.status.id === 3);
 
