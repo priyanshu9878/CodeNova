@@ -12,7 +12,7 @@ import {
   getAllProblem,
   getAllProblemsAdmin,
   AllSolvedProblems,
-  submittedProblem, getAllProblemsAdmin
+  submittedProblem
 } from "../controllers/userProblem.js";
 
 // Create
