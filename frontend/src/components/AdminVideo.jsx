@@ -13,18 +13,21 @@ const AdminVideo = () => {
   }, []);
 
   const fetchProblems = async () => {
-    try {
-      setLoading(true);
-      const { data } = await axiosClient.get('/problem/getAllProblem');
-       console.log(data);
-     setProblems(Array.isArray(data.problems) ? data.problems : []);
-    } catch (err) {
-     setError(err.response?.data?.error || "Failed to fetch problems");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    setLoading(true);
+
+    const { data } = await axiosClient.get("/problem/admin/all");
+
+    console.log(data);
+
+    setProblems(Array.isArray(data) ? data : []);
+  } catch (err) {
+    setError(err.response?.data?.error || "Failed to fetch problems");
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this video?')) return;
