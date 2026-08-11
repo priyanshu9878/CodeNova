@@ -93,7 +93,7 @@ if (filters.status === "unsolved") {
       <img
         src="/logo.png"
         alt="CodeNova Logo"
-        className="w-8 h-8 object-contain"
+        className="w-12 h-10 object-contain"
       />
 
       <span className="font-bold">
