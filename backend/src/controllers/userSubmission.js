@@ -148,14 +148,14 @@ console.log("==================================");
 }
 
 
-//      console.log({
-//     status,
-//     testCasesPassed,
-//     total: problem.hiddenTestCases.length,
-//     runtime,
-//     memory,
-//     errorMessage
-// });
+     console.log({
+    status,
+    testCasesPassed,
+    total: problem.hiddenTestCases.length,
+    runtime,
+    memory,
+    errorMessage
+});
     res.status(201).send(submittedResult);
 
     }catch(error){

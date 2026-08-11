@@ -22,10 +22,11 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "https://code-nova-three.vercel.app",
-],
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "https://code-nova-three.vercel.app",
+      "https://code-nova-git-main-priyanshu-p-projects14.vercel.app",
+    ],
     credentials: true,
   })
 );

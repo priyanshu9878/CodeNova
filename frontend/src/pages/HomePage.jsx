@@ -58,9 +58,26 @@ setTotalPages(data.totalPages);
 
   const filteredProblems = problems.filter(problem => {
     const difficultyMatch = filters.difficulty === 'all' || problem.difficulty === filters.difficulty;
-    const tagMatch = filters.tag === 'all' || problem.tags === filters.tag;
-    const statusMatch = filters.status === 'all' || 
-                      solvedProblems.some(sp => sp._id === problem._id);
+    //console.log(problem.difficulty);
+   const tagMatch =
+  filters.tag === "all" ||
+  problem.tags.includes(filters.tag);
+
+    //console.log(problem.tags);
+
+    const isSolved = solvedProblems.some(
+  sp => sp._id === problem._id
+);
+
+let statusMatch = true;
+
+if (filters.status === "solved") {
+  statusMatch = isSolved;
+}
+
+if (filters.status === "unsolved") {
+  statusMatch = !isSolved;
+}
     return difficultyMatch && tagMatch && statusMatch;
   });
 

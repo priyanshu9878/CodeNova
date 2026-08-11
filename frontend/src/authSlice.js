@@ -23,8 +23,10 @@ export const loginUser = createAsyncThunk(
       const response = await axiosClient.post('/user/login', credentials);
       return response.data.user;
     } catch (error) {
-      return rejectWithValue(error);
-    }
+  return rejectWithValue(
+    error.response?.data || { message: error.message }
+  );
+}
   }
 );
 
@@ -53,8 +55,10 @@ export const logoutUser = createAsyncThunk(
       await axiosClient.post('/user/logout');
       return null;
     } catch (error) {
-      return rejectWithValue(error);
-    }
+  return rejectWithValue(
+    error.response?.data || { message: error.message }
+  );
+}
   }
 );
 
