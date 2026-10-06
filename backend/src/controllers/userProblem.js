@@ -247,7 +247,7 @@ return res.status(200).json(problem);
 
 export const getAllProblem = async (req, res) => {
   try {
-    const page = Number(req.query.page) || 1;
+    const page = 1;
     const limit = 5;
     const skip = (page - 1) * limit;
 
