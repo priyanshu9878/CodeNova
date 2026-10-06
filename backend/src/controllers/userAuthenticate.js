@@ -150,10 +150,6 @@ res.cookie("token", token, {
     }
 }
 
-export const GetProfile = async(req,res)=>{
-
-}
-
 export const deleteProfile = async(req,res)=>{
     try{
         const userId = req.result._id;
