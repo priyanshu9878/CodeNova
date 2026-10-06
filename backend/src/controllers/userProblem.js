@@ -85,9 +85,6 @@ ${completeCode}
 ${driver.code}
 `;
 
-      console.log("========== CODE ==========");
-      console.log(executableCode);
-      console.log("==========================");
 
       const submissions = visibleTestCases.map((testCase) => ({
         source_code: executableCode,
@@ -109,12 +106,12 @@ ${driver.code}
           const decodedStderr = decode(result.stderr);
           const decodedCompileOutput = decode(result.compile_output);
 
-          console.error("=== TEST CASE FAILED ===");
-          console.error("Status:", result.status);
-          console.error("Compile Output:\n", decodedCompileOutput);
-          console.error("StdErr:\n", decodedStderr);
-          console.error("StdOut:\n", decodedStdout);
-          console.error("========================");
+          // console.error("=== TEST CASE FAILED ===");
+          // console.error("Status:", result.status);
+          // console.error("Compile Output:\n", decodedCompileOutput);
+          // console.error("StdErr:\n", decodedStderr);
+          // console.error("StdOut:\n", decodedStdout);
+          // console.error("========================");
 
           return res.status(400).json({
             message: `Validation failed: ${result.status.description}`,
